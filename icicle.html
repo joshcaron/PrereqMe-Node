@@ -6,6 +6,10 @@ rect {
   stroke: #fff;
 }
 
+.label{
+    font-family: sans-serif;
+}
+
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.js"></script>
@@ -26,7 +30,7 @@ function id (course){ return course.dept + course.num; }
 var courses = d3.map();
 
 var partition = d3.layout.partition()
-    .children(function(d) { 
+    .children(function(d) {
         return d.prereqs.length == 0 ? null : [].concat.apply([], d.prereqs.map(
             function(or_clause_ids){
                 var clr = color.shift();
@@ -44,35 +48,48 @@ var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-var rect = svg.selectAll("rect");
+var rects, labels;
 
 d3.json("dummy_api_response.json", function(error, json) {
   json.root.color = color.shift();
   courses.set(id(json.root), json.root);
   json.coreqs .forEach(function(d){ courses.set(id(d), d); });
   json.prereqs.forEach(function(d){ courses.set(id(d), d); });
-  console.log(courses)
-  rect = rect
-      .data(partition(json.root))
-    .enter().append("rect")
+
+  var sel = svg.selectAll("rect")
+    .data(partition(json.root))
+    .enter();
+
+    rects = sel.append("rect")
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y); })
       .attr("width", function(d) { return x(d.dx); })
       .attr("height", function(d) { return y(d.dy); })
       .attr("fill", function(d) { return d.color; })
       .on("click", clicked);
+
+    labels = sel.append("text")
+      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+y(d.y+d.dy/2)+")"})
+      .attr("class", "label")
+      .attr("text-anchor", "middle")
+      .text(function(d){return d.name});
+
 });
 
 function clicked(d) {
   x.domain([d.x, d.x + d.dx]);
   y.domain([d.y, 1]).range([d.y ? 20 : 0, height]);
 
-  rect.transition()
+  rects.transition()
       .duration(750)
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y); })
       .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
       .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); });
+
+  labels.transition()
+      .duration(750)
+      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+y(d.y+d.dy/2)+")"})
 }
 
 </script>
