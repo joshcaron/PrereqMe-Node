@@ -25,7 +25,7 @@ var y = d3.scale.linear()
     .range([0, height]);
 
 var colors = [["#3182bd", "#6baed6", "#9ecae1", "#c6dbef"], ["#e6550d", "#fd8d3c", "#fdae6b", "#fdd0a2"], ["#31a354", "#74c476", "#a1d99b", "#c7e9c0"], ["#756bb1", "#9e9ac8", "#bcbddc", "#dadaeb"], ["#636363", "#969696", "#bdbdbd", "#d9d9d9"]]
-var root_color = "#8c6d31";
+var root_color = "#624c22";
 var failsafe_color = "#bdbdbd";
 
 d3.scale.category20c().range();
@@ -62,21 +62,26 @@ d3.json("dummy_api_response.json", function(error, json) {
         .enter();
 
     function assign_color(d){
-        if (d.children){
-            if(d.prereqs.length == 1){ //reuse parent hue
-                var clr = d.color.slice();
-                    clr.shift();
-                d.children.map(function(c){
-                    c.color = clr;
-                    assign_color(c);
-                })
-            }else{ //pick new hues
-                d.children.map(function(c){
-                    c.color = colors[0];
-                    colors.shift();
-                    assign_color(c);
-                })
-            }
+        if (d.prereqs.length){
+            d.prereqs = d.prereqs.sort(function(a,b){return a.length > b.length ? -1 : 1})
+            d.prereqs.map(function(or_clause,i){
+                if (i==0 && d != json.root){ //reuse parent hue for first, largest OR-clause
+                    var clr = d.color.slice();
+                        clr.shift();
+                    or_clause.map(function(c_id){
+                        var c = courses.get(c_id)
+                        c.color = clr;
+                        assign_color(c);
+                    })
+                }else{ //pick new hues for separate AND requirements
+                    or_clause.map(function(c_id){
+                        var c = courses.get(c_id)
+                        c.color = colors[0];
+                        colors.shift();
+                        assign_color(c);
+                    })
+                }
+            })
         }
     }
     assign_color(json.root);
