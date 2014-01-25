@@ -13,11 +13,7 @@ var courseSchema = new mongoose.Schema({
 	courseData: {
 		attributes: [String],
 		description: String,
-		lectureHours: {
-			max: Number,
-			min: Number,
-			type: String
-		},
+		lectureHours: {},
 		levels: [String],
 		prereqstr: [],
 		scheduleTypes: [String],
