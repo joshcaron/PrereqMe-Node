@@ -4,7 +4,7 @@ exports.setup = function(app) {
 	  res.send('API is running');
 	});
 
-
+	// Get the DB connection
 	var db = require("./db.js");
 	var Course = db.Course;
 
@@ -32,18 +32,22 @@ exports.setup = function(app) {
 
 	// Getting courses by department id and course id
 	app.get('/api/courses/:deptId/:courseId', function(req, res) {
-		// console.log(req.params.deptId);
-		// console.log(req.params.courseId);
 		var search = {
 			"departmentId": req.params.deptId,
-			// "courseId": parseInt(req.params.courseId)
+			"courseId": parseInt(req.params.courseId)
 		};
-		Course.find(search, function(err, course) {
+
+		Course.find({"departmentId": req.params.deptId}, function(err, courses) {
 			if (err) {
 				console.log(err);
-				res.send("An error has occured and has been logged.");
 			}
-			res.send(course);
+			var foundCourse = null;
+			courses.forEach(function(course) {
+				if (course.courseId == req.params.courseId) {
+					foundCourse = course;
+				}
+			});
+			res.send(foundCourse);
 		});
 	});
 
