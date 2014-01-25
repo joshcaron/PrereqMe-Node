@@ -2,14 +2,14 @@
     {"dept": "CS",
       "num": "3000",
       "name": "Advanced CS course",
-      "prereqs": [["CS2510"]]
+      "prereqs": [["CS2510"], ["MATH2500"]]
      }
 , "coreqs": []
 , "prereqs":
     [ {"dept": "CS",
        "num": "2510",
        "name": "Middle CS course",
-       "prereqs": [["CS2500", "CS2400"], ["MATH2000"]]
+       "prereqs": [["CS2500", "CS2400"]]
       }
     , {"dept": "CS",
        "num": "2500",
@@ -22,13 +22,18 @@
        "prereqs": []
       }
     , {"dept": "MATH",
-       "num": "2000",
-       "name": "Entry Math course",
-       "prereqs": [["MATH1000"]]
+       "num": "2500",
+       "name": "Middle Math course",
+       "prereqs": [["MATH1000", "MATH1100"]]
        }
     , {"dept": "MATH",
        "num": "1000",
-       "name": "Rudimentary Math course",
+       "name": "Entry Math course 1",
+       "prereqs": []
+      }
+    , {"dept": "MATH",
+       "num": "1100",
+       "name": "Entry Math course 2",
        "prereqs": []
       }
     ]
