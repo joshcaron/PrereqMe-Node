@@ -9,7 +9,7 @@
     [ {"dept": "CS",
        "num": "2510",
        "name": "Middle CS course",
-       "prereqs": [["CS2500", "CS2400"]]
+       "prereqs": [["CS2400", "CS2500"]]
       }
     , {"dept": "CS",
        "num": "2500",
