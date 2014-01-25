@@ -1,12 +1,23 @@
+// ---------------------------------------------------------------------------------------------- //
+// Setup of global variables
+// ---------------------------------------------------------------------------------------------- //
 
-// Get the DB connection
-var db = require("./db.js");
-var Course = db.Course;
-// var courseLookup = require('./courseLookup.js');
+var DEBUGGING = false;			// Are we in DEBUG mode?
+var db = require("./db.js");	// Load the database
+var Course = db.Course;			// Load the Course model
+var async = require('async');	// Load async, the helper library for asynchronous requests
 
-// async
-var async = require('async');
+// Helper function for debugging
+function debug(data) { if (DEBUGGING) { console.log("DEBUG: " + data); } }
 
+// ---------------------------------------------------------------------------------------------- //
+// Courses and Classes
+// ---------------------------------------------------------------------------------------------- //
+
+/**
+ * A Class is a Course, but stripped of extraneous data
+ * @param {Course} data The Course data to be converted to a Class
+ */
 var Class = function(data) {
 	var self = {};
 	self.dept = data.departmentId;
@@ -17,17 +28,34 @@ var Class = function(data) {
 	return self;
 }
 
+/**
+ * Convert a Course to a Class
+ */
 function courseToClass(course) {
 	return new Class(course);
 }
 
+/**
+ * Convert a list of Courses to a list of Classes
+ * @param  {Array[Course]} courseList
+ * @return {Array[Class]}
+ */
+function convertCourseList(courseList) {
+	var classList = [];
+	courseList.forEach(function(course) {
+		var c = courseToClass(course);
+		classList.push(c);
+	});
 
-function debug(data) {
-	// console.log("DEBUG: " + data);
+	return classList;
 }
 
+// ---------------------------------------------------------------------------------------------- //
+// Loading the Course data
+// ---------------------------------------------------------------------------------------------- //
+
 /**
- * Loads a course asynchronously
+ * Loads a single course asynchronously
  * @param  {String}   deptId   The department id of the course
  * @param  {Number}   courseId The course id
  * @param  {Function} callback A callback function specified by the signature:
@@ -54,6 +82,7 @@ function loadAsyncCourse(deptId, courseId, callback) {
 	});
 }
 
+
 /**
  * Loads a list of courses asynchronously
  * @param  {Array} courses      The list of courses as strings "XXXX 0000"
@@ -63,11 +92,6 @@ function loadAsyncCourse(deptId, courseId, callback) {
  */
 function loadAsyncCourseList(courses, listCallback) {
 	var courseData = [];
-
-	// // DEBUG
-	// console.log("Loading course list....");
-	// console.log(courses);
-
 	async.forEach(courses, function(course, courseLoadedCallback) {
 		var pieces = course.split(" ");
 		var deptId = pieces[0];
@@ -77,11 +101,6 @@ function loadAsyncCourseList(courses, listCallback) {
 				console.log("ERROR: " + data + "\n");
 			}
 
-			// DEBUG
-			// console.log("Loaded a course.");
-			// console.log(data);
-			
-			// courseData.push(data);
 			var loadPrereqs = function(success, prereqData) {
 				if (!success) {
 					console.log(prereqData);
@@ -105,6 +124,7 @@ function loadAsyncCourseList(courses, listCallback) {
 		listCallback(true, courseData);
 	});
 }
+
 
 /**
  * Loads the preqreqs of a course asynchronously
@@ -140,6 +160,14 @@ function loadAsyncCoursePrereqs(course, callback) {
 }
 
 
+/**
+ * Asyncronously loads a single course, including all prerequisites
+ * @param  {String}   deptId   The department the course is in
+ * @param  {Number}   courseId The numerical id of the course
+ * @param  {Function} callback A callback function for handling the data return
+ *
+ * @todo Refactor this. A lot.
+ */
 function loadAsyncRoot(deptId, courseId, callback) {
 	var course = null;
 	var root = null;
@@ -236,122 +264,53 @@ function loadAsyncRoot(deptId, courseId, callback) {
 	});
 }
 
+// ---------------------------------------------------------------------------------------------- //
+// Exports to be used in other files
+// ---------------------------------------------------------------------------------------------- //
 
-var convertCourseList = function(courseList) {
-	var classList = [];
-	courseList.forEach(function(course) {
-		var c = courseToClass(course);
-		classList.push(c);
+
+/**
+ * Load all the courses from the database
+ * @param  {Function} callback A callback funtion for handling the data return
+ */
+exports.loadAll = function(callback) {
+	Course.find(function(err, courses) {
+		if (err) {
+			callback(false, "Could not load all courses.");
+		} else {
+			callback(true, convertCourseList(courses));
+		}
 	});
-
-	return classList;
 }
 
-exports.setup = function(app) {
-	// The API root
-	app.get('/api', function (req, res) {
-		res.send('API is running');
-	});
-
-
-	// Get all the courses
-	app.get('/api/courses', function(req, res) {
-		Course.find(function(err, courses) {
-			if (err) {
-				console.log(err);
-				res.send("An error occured and has been logged.");
-			}
-			res.send(convertCourseList(courses));
-		});
-	});
-
-	// Getting courses by department id
-	app.get('/api/courses/:deptId', function(req, res) {
-		// console.log(res.send);
-		Course.find( { "departmentId": req.params.deptId }, function(err, courses) {
-			if (err) {
-				console.log(err);
-				res.send("An error occured and has been logged.");
-			}
-			res.send(convertCourseList(courses));
-		});
-	});
-
-	// Getting courses by department id and course id
-	app.get('/api/courses/:deptId/:courseId', function(req, res, next) {
-		var deptId = req.params.deptId;
-		var courseId = req.params.courseId;
-		var loadCourses = function(success, data) {
-			if (!success) {
-				console.log("ERROR: " + data);
-			} else {
-				console.log("Fully loaded.");
-				res.send(data);
-			}
+/**
+ * Loads all the courses for a single department
+ * @param  {String}   deptId   The department to load courses from
+ * @param  {Function} callback A callback function for handling the data return
+ */
+exports.loadDepartment = function(deptId, callback) {
+	Course.find( { "departmentId": deptId }, function(err, courses) {
+		if (err) {
+			callback(false, "Could not load department " + deptId);
+		} else {
+			callback(true, convertCourseList(courses));
 		}
-		loadAsyncRoot(deptId, courseId, loadCourses)
-		// var locals = {
-		// 	root: null,
-		// 	prereqs: []
-		// };
-		// var deptId = req.params.deptId;
-		// var courseId = req.params.courseId;
-		// var rootCourse = null;
-		// // Execute a series of async requests
-		// async.series([
-		// 	// First, we need to get the root course
-		// 	function(callback) {
-		// 		var loadRootCourse = function(success, data) {
-		// 			// DEBUG
-		// 			console.log("LOADED ROOT");
-		// 			console.log(data);
-		// 			if (!success) {
-		// 				// ERROR :(
-		// 				console.log(data);
-		// 			}
-		// 			// We loaded the course!
-		// 			rootCourse = data;
-		// 			locals.root = {
-		// 				"dept": data.departmentId,
-		// 				"num" : data.courseId,
-		// 				"name": data.courseData.title
-		// 			}
-		// 			callback();
-		// 		}
-		// 		loadAsyncCourse(deptId, courseId, loadRootCourse);
-		// 	},
-
-		// 	// Then, we need to get the prereqs for the root course
-		// 	function(callback) {
-		// 		var prereqs = [];
-				
-		// 		var prereqsToLoad = rootCourse.courseData.prereqstr;
-		// 		async.forEach(prereqsToLoad, function(prereqGroup, prereqGroupLoaded) {
-		// 			var loadPrereqs = function(success, data) {
-		// 				if (!success) {
-		// 					console.log(data);
-		// 				}
-		// 				// DEBUG
-		// 				console.log("\n\n\n\n\nLoaded prereq group.\n\n\n\n\n\n");
-		// 				console.log(data);
-
-		// 				prereqs.push(data);
-		// 				prereqGroupLoaded();
-		// 			}
-		// 			console.log("Fectching group " + prereqGroup);
-		// 			loadAsyncCourseList(prereqGroup, loadPrereqs);
-		// 		}, function(err) { // After loading all prereq groups
-		// 			if (err) {
-		// 				console.log(err);
-		// 			}
-		// 			locals.prereqs = prereqs;
-		// 			callback();
-		// 		});
-		// 	}
-
-		// ], function(err) { // Final callback
-		// 	res.send(locals);
-		// });
-
 	});
+}
+
+/**
+ * Loads a single course from the database
+ * @param  {String}   deptId   The department the course is in
+ * @param  {Number}   courseId The numerical id of the course
+ * @param  {Function} callback A callback function for handling the data return
+ */
+exports.loadCourse = function(deptId, courseId, callback) {
+	var courseCallback = function(success, data) {
+		if (!success) {
+			callback(false, "Could not load course " + deptId + " " + courseId);
+		} else {
+			callback(true, data);
+		}
+	}
+	loadAsyncRoot(deptId, courseId, courseCallback);
 }

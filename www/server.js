@@ -16,9 +16,8 @@ app.configure(function () {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-// Setup the api endpoints
-var api = require("./api.js");
-api.setup(app);
+var router = require("./router.js");
+router.setup(app);
 
 // Launch server
 app.listen(8888);
