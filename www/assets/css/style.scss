@@ -1,4 +1,5 @@
 $bgpurp: #474b75;
+$ltpurp1: #BEBFCB;
 $test: #9ed5d0;
 
 body, html {
@@ -17,7 +18,7 @@ body {
   color: #eee;
   font-family: 'Open Sans', sans-serif;
   font-weight: 300;
-  font-size: 1.2em;
+  font-size: 1.6em;
 }
 
 .container {
@@ -31,6 +32,34 @@ body {
   width:70%;
 }
 
-select.dept {
-  border: 0 !important;
+input:not([type=submit]):not([type=file]) {
+  /* omg so much cleaner */
+  font: {
+    family: inherit;
+    size: inherit;
+  }
+  border: {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 2px white dashed;
+  }
+  background-color: $bgpurp;
+  color: #85AEB6;
+
+  &:focus {
+    background-color: $ltpurp1;
+    color: $bgpurp;
+  }
+}
+
+::-webkit-input-placeholder {  
+  color: #85AEB6;
+}
+//:-moz-placeholder,
+//::-moz-placeholder,
+//:-ms-input-placeholder 
+
+input.dept {
+  width: 200px;
 }
