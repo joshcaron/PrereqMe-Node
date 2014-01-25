@@ -24,7 +24,11 @@ var x = d3.scale.linear()
 var y = d3.scale.linear()
     .range([0, height]);
 
-var color = d3.scale.category20c().range();
+var colors = [["#3182bd", "#6baed6", "#9ecae1", "#c6dbef"], ["#e6550d", "#fd8d3c", "#fdae6b", "#fdd0a2"], ["#31a354", "#74c476", "#a1d99b", "#c7e9c0"], ["#756bb1", "#9e9ac8", "#bcbddc", "#dadaeb"], ["#636363", "#969696", "#bdbdbd", "#d9d9d9"]]
+var root_color = "#969696";
+var failsafe_color = "#bdbdbd";
+
+d3.scale.category20c().range();
 
 function id (course){ return course.dept + course.num; }
 var courses = d3.map();
@@ -33,11 +37,8 @@ var partition = d3.layout.partition()
     .children(function(d) {
         return d.prereqs.length == 0 ? null : [].concat.apply([], d.prereqs.map(
             function(or_clause_ids){
-                var clr = color.shift();
                 var or_clause = or_clause_ids.map(function(or_id){
-                    var or_token = courses.get(or_id)
-                    or_token.color = clr;
-                    return or_token;
+                    return courses.get(or_id);
                 });
                 return or_clause;
             }))
@@ -51,7 +52,7 @@ var svg = d3.select("body").append("svg")
 var rects, labels;
 
 d3.json("dummy_api_response.json", function(error, json) {
-  json.root.color = color.shift();
+  json.root.color = [root_color];
   courses.set(id(json.root), json.root);
   json.coreqs .forEach(function(d){ courses.set(id(d), d); });
   json.prereqs.forEach(function(d){ courses.set(id(d), d); });
@@ -60,12 +61,26 @@ d3.json("dummy_api_response.json", function(error, json) {
     .data(partition(json.root))
     .enter();
 
+    //assign colors
+    json.root.children.map(function(d){
+        d.color = colors[0];
+        colors.shift();
+        function recurse(c){
+            c.color = c.parent.color.slice();
+            c.color.shift();
+            if (c.children){
+                c.children.map(recurse);
+            }
+        }
+        d.children.map(recurse);
+    })
+
     rects = sel.append("rect")
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y); })
       .attr("width", function(d) { return x(d.dx); })
       .attr("height", function(d) { return y(d.dy); })
-      .attr("fill", function(d) { return d.color; })
+      .attr("fill", function(d) { return d.color[0] || failsafe_color; })
       .on("click", clicked);
 
     labels = sel.append("text")
