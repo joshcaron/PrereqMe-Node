@@ -19,7 +19,7 @@ var courseSchema = new mongoose.Schema({
 			type: String
 		},
 		levels: [String],
-		prereqstr: String,
+		prereqstr: [],
 		scheduleTypes: [String],
 		title: String,
 		departmentId: String
