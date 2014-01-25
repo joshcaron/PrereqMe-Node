@@ -1,0 +1,15 @@
+rect {
+  stroke: #fff;
+}
+
+.label1, .label2, .label_top, .label_coreq{
+    font-family: sans-serif;
+    pointer-events: none;
+}
+.label1{
+    font-size: 18px;
+}
+
+.label_coreq{
+    font-style: italic;
+}
