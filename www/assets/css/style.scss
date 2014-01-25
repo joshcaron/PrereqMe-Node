@@ -92,10 +92,24 @@ input:not([type=submit]):not([type=file]) {
 //::-moz-placeholder,
 //:-ms-input-placeholder 
 
-input.dept {
+input#dept {
   width: 165px;
 }
 
 input.cnumber {
   width: 210px;
+}
+
+.ui-menu-item {
+  color: blue;
+}
+
+.ui-helper-hidden-accessible { display:none; }
+
+.ui-autocomplete {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  background-color: white;
+  width: intrinsic;
 }
