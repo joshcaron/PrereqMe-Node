@@ -6,8 +6,11 @@ rect {
   stroke: #fff;
 }
 
-.label{
+.label1, .label2{
     font-family: sans-serif;
+}
+.label1{
+    font-size: 18px;
 }
 
 </style>
@@ -92,9 +95,15 @@ d3.json("dummy_api_response.json", function(error, json) {
       .attr("fill", function(d) { return d.color || colors[d.hue][d.depth-1] || failsafe_color; })
       .on("click", clicked);
 
-    labels = sel.append("text")
-      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+y(d.y+d.dy/2)+")"})
-      .attr("class", "label")
+    labels1 = sel.append("text")
+      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)-10)+")"})
+      .attr("class", "label1")
+      .attr("text-anchor", "middle")
+      .text(function(d){return d.dept +" "+ d.num});
+
+    labels2 = sel.append("text")
+      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)+10)+")"})
+      .attr("class", "label2")
       .attr("text-anchor", "middle")
       .text(function(d){return d.name});
 
@@ -111,9 +120,14 @@ function clicked(d) {
       .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
       .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); });
 
-  labels.transition()
+  labels1.transition()
       .duration(750)
-      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+y(d.y+d.dy/2)+")"})
+      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)-10)+")"})
+
+  labels2.transition()
+      .duration(750)
+      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)+10)+")"})
+
 }
 
 </script>
