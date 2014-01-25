@@ -2,7 +2,6 @@
 // Get the DB connection
 var db = require("./db.js");
 var Course = db.Course;
-// var courseLookup = require('./courseLookup.js');
 
 // async
 var async = require('async');
@@ -289,69 +288,6 @@ exports.setup = function(app) {
 				res.send(data);
 			}
 		}
-		loadAsyncRoot(deptId, courseId, loadCourses)
-		// var locals = {
-		// 	root: null,
-		// 	prereqs: []
-		// };
-		// var deptId = req.params.deptId;
-		// var courseId = req.params.courseId;
-		// var rootCourse = null;
-		// // Execute a series of async requests
-		// async.series([
-		// 	// First, we need to get the root course
-		// 	function(callback) {
-		// 		var loadRootCourse = function(success, data) {
-		// 			// DEBUG
-		// 			console.log("LOADED ROOT");
-		// 			console.log(data);
-		// 			if (!success) {
-		// 				// ERROR :(
-		// 				console.log(data);
-		// 			}
-		// 			// We loaded the course!
-		// 			rootCourse = data;
-		// 			locals.root = {
-		// 				"dept": data.departmentId,
-		// 				"num" : data.courseId,
-		// 				"name": data.courseData.title
-		// 			}
-		// 			callback();
-		// 		}
-		// 		loadAsyncCourse(deptId, courseId, loadRootCourse);
-		// 	},
-
-		// 	// Then, we need to get the prereqs for the root course
-		// 	function(callback) {
-		// 		var prereqs = [];
-				
-		// 		var prereqsToLoad = rootCourse.courseData.prereqstr;
-		// 		async.forEach(prereqsToLoad, function(prereqGroup, prereqGroupLoaded) {
-		// 			var loadPrereqs = function(success, data) {
-		// 				if (!success) {
-		// 					console.log(data);
-		// 				}
-		// 				// DEBUG
-		// 				console.log("\n\n\n\n\nLoaded prereq group.\n\n\n\n\n\n");
-		// 				console.log(data);
-
-		// 				prereqs.push(data);
-		// 				prereqGroupLoaded();
-		// 			}
-		// 			console.log("Fectching group " + prereqGroup);
-		// 			loadAsyncCourseList(prereqGroup, loadPrereqs);
-		// 		}, function(err) { // After loading all prereq groups
-		// 			if (err) {
-		// 				console.log(err);
-		// 			}
-		// 			locals.prereqs = prereqs;
-		// 			callback();
-		// 		});
-		// 	}
-
-		// ], function(err) { // Final callback
-		// 	res.send(locals);
-		// });
-
+		loadAsyncRoot(deptId, courseId, loadCourses);
 	});
 }
