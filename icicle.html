@@ -26,15 +26,17 @@ function id (course){ return course.dept + course.num; }
 var courses = d3.map();
 
 var partition = d3.layout.partition()
-    .children(function(d) { return d.prereqs.length == 0 ? null : d.prereqs.map(
-        function(prereq_ors_ids){
-            var clr = color.shift();
-            console.log(prereq_ors_ids);
-            var prereq_or = courses.get(prereq_ors_ids);
-            console.log(prereq_or);
-            prereq_or.color = clr;
-            return prereq_or;
-            })
+    .children(function(d) { 
+        return d.prereqs.length == 0 ? null : [].concat.apply([], d.prereqs.map(
+            function(or_clause_ids){
+                var clr = color.shift();
+                var or_clause = or_clause_ids.map(function(or_id){
+                    var or_token = courses.get(or_id)
+                    or_token.color = clr;
+                    return or_token;
+                });
+                return or_clause;
+            }))
        })
     .value(function(d) { return 1 });
 
@@ -49,6 +51,7 @@ d3.json("dummy_api_response.json", function(error, json) {
   courses.set(id(json.root), json.root);
   json.coreqs .forEach(function(d){ courses.set(id(d), d); });
   json.prereqs.forEach(function(d){ courses.set(id(d), d); });
+  console.log(courses)
   rect = rect
       .data(partition(json.root))
     .enter().append("rect")
