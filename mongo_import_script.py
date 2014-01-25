@@ -8,12 +8,15 @@ db = client.volans
 collection = db.courses
 
 # JSON setup
-json_data=open('all_data.json')
-courses = json.load(json_data)
-courses_array = []
-departments_array = []
+json_data = open('all_data_new.json')
+data = json.load(json_data)
 
-for department in courses:
-	departments_array.append(department)
-	collection.insert(department)
+for department, courses in data.iteritems():
 
+	for course in courses:
+		mongoCourse = {}
+		mongoCourse["departmentId"] = department
+		for id, courseData in course.iteritems():
+			mongoCourse["courseId"] = id
+			mongoCourse["courseData"] = courseData
+		collection.insert(mongoCourse)

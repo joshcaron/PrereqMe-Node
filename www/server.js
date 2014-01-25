@@ -1,44 +1,21 @@
-var http = require("http");
-var mongoose = require('mongoose');
-
-// Server things
-http.createServer(function(request, response) {
-  response.writeHead(200, {"Content-Type": "text/plain"});
-  response.write("Hello World");
-  response.end();
-}).listen(8888);
- 
-// Mongo DB Fun times
-mongoose.connect('mongodb://localhost/volans');
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function callback () {
-  // yay!
-  console.log("Connected to DB");
-  var courses = mongoose.get('courses');
-  console.log(courses);
-
+// Setup the server
+var application_root = __dirname,
+    express = require("express"),
+    path = require("path");
+    
+// Configure the server
+var app = express();
+app.configure(function () {
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);
+  app.use(express.static(path.join(application_root, "public")));
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-var courseSchema = new mongoose.Schema({
-	attributes: [String],
-	description: String,
-	lectureHours: {
-		max: Number,
-		min: Number,
-		type: String
-	},
-	levels: [String],
-	prereqstr: String,
-	scheduleTypes: [String],
-	title: String
-});
+// Setup the api endpoints
+var api = require("./api.js");
+api.setup(app);
 
-var Course = mongoose.model('Course', courseSchema);
-
-Course.find(function(err, courses) {
-	if (err) {
-		console.error(err);
-	}
-	console.dir(courses);
-});
+// Launch server
+app.listen(8888);
