@@ -174,13 +174,25 @@ d3.json("http://localhost:8888/api/courses/"+root_dept+"/"+root_num, function(er
       .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)-10)+")"})
       .attr("class", "label1")
       .attr("text-anchor", "middle")
-      .text(function(d){return d.dept +" "+ d.num});
+      .text(function(d){return d.dept +" "+ d.num})
+      .style("opacity", function(d){
+          var text_w = this.getBBox().width;
+          var box_w = x(d.x + d.dx) - x(d.x);
+          console.log(text_w, box_w);
+          return text_w > box_w ? "0" : "1";
+      })
 
     labels2 = sel.append("text")
       .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)+10)+")"})
       .attr("class", "label2")
       .attr("text-anchor", "middle")
-      .text(function(d){return d.name});
+      .text(function(d){return d.name})
+      .style("opacity", function(d){
+          var text_w = this.getBBox().width;
+          var box_w = x(d.x + d.dx) - x(d.x);
+          console.log(text_w, box_w);
+          return text_w > box_w ? "0" : "1";
+      })
 
 });
 
@@ -202,10 +214,22 @@ function clicked(d) {
   labels1.transition()
       .duration(750)
       .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)-10)+")"})
+      .style("opacity", function(d){
+          var text_w = this.getBBox().width;
+          var box_w = x(d.x + d.dx) - x(d.x);
+          console.log(text_w, box_w);
+          return text_w > box_w ? "0" : "1";
+      })
 
   labels2.transition()
       .duration(750)
       .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)+10)+")"})
+      .style("opacity", function(d){
+          var text_w = this.getBBox().width;
+          var box_w = x(d.x + d.dx) - x(d.x);
+          console.log(text_w, box_w);
+          return text_w > box_w ? "0" : "1";
+      })
 
   coreqs.transition()
       .duration(750)
