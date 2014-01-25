@@ -22,13 +22,16 @@ body {
   right: 0;
   margin: auto;
   height: 50px;
-  width: 70%; }
+  width: 80%;
+  text-align: center; }
 
 input {
   font-family: inherit;
   font-size: inherit; }
 
 input[type=submit] {
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
   display: block;
   margin: 15px auto 0 auto;
   background-color: #5aa8b7;
@@ -39,10 +42,9 @@ input[type=submit] {
   cursor: pointer; }
   input[type=submit]:hover {
     background-color: #9ed5d0;
-    color: #9ed5d0; }
+    color: #5aa8b7; }
 
 input:not([type=submit]):not([type=file]) {
-  /* omg so much cleaner */
   font-family: inherit;
   font-size: inherit;
   border-top: 0;
@@ -59,4 +61,7 @@ input:not([type=submit]):not([type=file]) {
   color: #85AEB6; }
 
 input.dept {
-  width: 175px; }
+  width: 165px; }
+
+input.cnumber {
+  width: 210px; }

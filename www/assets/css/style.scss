@@ -5,7 +5,7 @@ $Blue: #9ed5d0;
 $dBlue: #5aa8b7;
 
 @mixin rounded {
-    -webkit-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
 }
 
@@ -36,7 +36,8 @@ body {
   right:0;
   margin:auto; 
   height:50px; 
-  width:70%;
+  width:80%;
+  text-align: center;
 }
 
 input {
@@ -47,7 +48,7 @@ input {
 }
 
 input[type=submit] {
-
+  @include rounded;
   display: block;
   margin: 15px auto 0 auto;
   background-color: $dBlue;
@@ -59,12 +60,12 @@ input[type=submit] {
 
   &:hover {
     background-color: $Blue;
-    color: $Blue;
+    color: $dBlue;
   }
 }
 
 input:not([type=submit]):not([type=file]) {
-  /* omg so much cleaner */
+  // omg so much cleaner
   font: {
     family: inherit;
     size: inherit;
@@ -92,5 +93,9 @@ input:not([type=submit]):not([type=file]) {
 //:-ms-input-placeholder 
 
 input.dept {
-  width: 175px;
+  width: 165px;
+}
+
+input.cnumber {
+  width: 210px;
 }
