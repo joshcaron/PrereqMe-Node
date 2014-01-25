@@ -20,14 +20,21 @@ var x = d3.scale.linear()
 var y = d3.scale.linear()
     .range([0, height]);
 
-var color = d3.scale.category20c();
+var color = d3.scale.category20c().range();
 
 function id (course){ return course.dept + course.num; }
-courses = d3.map();
+var courses = d3.map();
 
 var partition = d3.layout.partition()
     .children(function(d) { return d.prereqs.length == 0 ? null : d.prereqs.map(
-        function(g){ return courses.get(g); })
+        function(prereq_ors_ids){
+            var clr = color.shift();
+            console.log(prereq_ors_ids);
+            var prereq_or = courses.get(prereq_ors_ids);
+            console.log(prereq_or);
+            prereq_or.color = clr;
+            return prereq_or;
+            })
        })
     .value(function(d) { return 1 });
 
@@ -38,6 +45,7 @@ var svg = d3.select("body").append("svg")
 var rect = svg.selectAll("rect");
 
 d3.json("dummy_api_response.json", function(error, json) {
+  json.root.color = color.shift();
   courses.set(id(json.root), json.root);
   json.coreqs .forEach(function(d){ courses.set(id(d), d); });
   json.prereqs.forEach(function(d){ courses.set(id(d), d); });
@@ -48,7 +56,7 @@ d3.json("dummy_api_response.json", function(error, json) {
       .attr("y", function(d) { return y(d.y); })
       .attr("width", function(d) { return x(d.dx); })
       .attr("height", function(d) { return y(d.dy); })
-      .attr("fill", function(d) { return color((d.children ? d : d.parent).key); })
+      .attr("fill", function(d) { return d.color; })
       .on("click", clicked);
 });
 
