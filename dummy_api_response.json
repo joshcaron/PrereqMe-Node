@@ -24,21 +24,36 @@
     , {"dept": "MATH",
        "num": "2500",
        "name": "Middle Math course",
-       "prereqs": [["MATH1000", "MATH1100"], ["MATH1500"]]
+       "prereqs": [["MATH1100", "MATH1200"], ["MATH1500"]]
        }
     , {"dept": "MATH",
-       "num": "1000",
+       "num": "1100",
        "name": "Entry Math course 1",
+       "prereqs": [["MATH1001"]]
+      }
+    , {"dept": "MATH",
+       "num": "1200",
+       "name": "Entry Math course 2",
+       "prereqs": [["MATH1002"]]
+      }
+    , {"dept": "MATH",
+       "num": "1001",
+       "name": "Review math course",
        "prereqs": []
       }
     , {"dept": "MATH",
-       "num": "1100",
-       "name": "Entry Math course 2",
+       "num": "1002",
+       "name": "Review math course",
        "prereqs": []
       }
     , {"dept": "MATH",
        "num": "1500",
        "name": "Other entry Math course",
+       "prereqs": [["MATH1400"]]
+      }
+    , {"dept": "MATH",
+       "num": "1400",
+       "name": "Rudimentary Math course",
        "prereqs": []
       }
     ]
