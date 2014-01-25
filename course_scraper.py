@@ -161,15 +161,17 @@ def get_course_info(dept):
     dom = get_course_page(dept)
     titles = elems_to_content(dom.cssselect('td.nttitle'))
     descriptions = dom.cssselect('td.ntdefault')[:len(titles)]
-    course_dict = {}
+    course_array = []
     for title, description in zip(titles, descriptions):
         course_num, title = TITLE_INFO_REGEX.match(title).groups()
         course_num = int(course_num)
         title = title.strip()
         info = parse_description(description)
         info['title'] = title
-        course_dict[course_num] = info 
-    return course_dict
+        course_dict = {}
+        course_dict[course_num] = info
+        course_array.append(course_dict)
+    return course_array
 
 def get_course_info_by_dept(depts, threadcount=10):
     """
@@ -214,7 +216,7 @@ def main():
         Writes all course information to all_courses.json
     """
     dept_dict = get_course_info_by_dept(get_departments())
-    with open('all_data.json', 'w') as fobj:
+    with open('all_data_new.json', 'w') as fobj:
         json.dump(dept_dict, fobj, indent=4, sort_keys=True)
 
 if __name__ == '__main__':
