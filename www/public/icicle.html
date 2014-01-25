@@ -58,12 +58,14 @@ var svg = d3.select("body").append("svg")
 
 var rects, labels1, labels2, labels_coreq, coreqs;
 
-d3.json("dummy_api_response.json", function(error, json) {
+d3.json("http://localhost:8888/api/courses/ECON/3560", function(error, json) {
     json.root.color = [root_color];
-    courses.set(id(json.root), json.root);
-    json.prereqs.forEach(function(d){
-        courses.set(id(d), d);
-    });
+    function intake(obj){
+        courses.set(id(obj.root), obj.root);
+        obj.prereqs.forEach(function(d){ intake(d); });
+    }
+    intake(root);
+
     courses.forEach(function(k,v){
         if (v.coreq){
             if (v.prereqs.length){
