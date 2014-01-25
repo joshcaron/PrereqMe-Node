@@ -15,8 +15,8 @@ rect {
 <script src="http://d3js.org/d3.v3.js"></script>
 <script>
 
-var width = 960,
-    height = 500;
+var width = 1300,
+    height = 650;
 
 var x = d3.scale.linear()
     .range([0, width]);
@@ -25,7 +25,7 @@ var y = d3.scale.linear()
     .range([0, height]);
 
 var colors = [["#3182bd", "#6baed6", "#9ecae1", "#c6dbef"], ["#e6550d", "#fd8d3c", "#fdae6b", "#fdd0a2"], ["#31a354", "#74c476", "#a1d99b", "#c7e9c0"], ["#756bb1", "#9e9ac8", "#bcbddc", "#dadaeb"], ["#636363", "#969696", "#bdbdbd", "#d9d9d9"]]
-var root_color = "#969696";
+var root_color = "#8c6d31";
 var failsafe_color = "#bdbdbd";
 
 d3.scale.category20c().range();
@@ -52,35 +52,41 @@ var svg = d3.select("body").append("svg")
 var rects, labels;
 
 d3.json("dummy_api_response.json", function(error, json) {
-  json.root.color = [root_color];
-  courses.set(id(json.root), json.root);
-  json.coreqs .forEach(function(d){ courses.set(id(d), d); });
-  json.prereqs.forEach(function(d){ courses.set(id(d), d); });
+    json.root.color = [root_color];
+    courses.set(id(json.root), json.root);
+    json.coreqs .forEach(function(d){ courses.set(id(d), d); });
+    json.prereqs.forEach(function(d){ courses.set(id(d), d); });
 
-  var sel = svg.selectAll("rect")
-    .data(partition(json.root))
-    .enter();
+    var sel = svg.selectAll("rect")
+        .data(partition(json.root))
+        .enter();
 
-    //assign colors
-    json.root.children.map(function(d){
-        d.color = colors[0];
-        colors.shift();
-        function recurse(c){
-            c.color = c.parent.color.slice();
-            c.color.shift();
-            if (c.children){
-                c.children.map(recurse);
+    function assign_color(d){
+        if (d.children){
+            if(d.prereqs.length == 1){ //reuse parent hue
+                var clr = d.color.slice();
+                    clr.shift();
+                d.children.map(function(c){
+                    c.color = clr;
+                    assign_color(c);
+                })
+            }else{ //pick new hues
+                d.children.map(function(c){
+                    c.color = colors[0];
+                    colors.shift();
+                    assign_color(c);
+                })
             }
         }
-        d.children.map(recurse);
-    })
+    }
+    assign_color(json.root);
 
     rects = sel.append("rect")
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y); })
       .attr("width", function(d) { return x(d.dx); })
       .attr("height", function(d) { return y(d.dy); })
-      .attr("fill", function(d) { return d.color[0] || failsafe_color; })
+      .attr("fill", function(d) { console.log(d); return (d.color || [failsafe_color])[0]; })
       .on("click", clicked);
 
     labels = sel.append("text")
