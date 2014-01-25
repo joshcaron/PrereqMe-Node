@@ -24,10 +24,25 @@
   stroke-opacity: .5;
 }
 
+.prereq_good{
+    stroke:green;
+    stroke-width: 4px;
+}
+
+.prereq_bad{
+    stroke:red;
+    stroke-width: 4px;
+}
+
+
 </style>
 <body>
 
-<svg></svg>
+<svg>
+    <marker xmlns="http://www.w3.org/2000/svg" id="triangle" style="fill:green;" viewBox="0 0 10 10" refX="0" refY="5" markerUnits="strokeWidth" markerWidth="4" markerHeight="3" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z"/>
+    </marker>
+</svg>
 
 <script src="http://d3js.org/d3.v3.js"></script>
 <script>
@@ -45,11 +60,6 @@ var x = d3.scale.quantize()
         .range(d3.range(0, 1, 1/num_semesters).map(function(d) { return d * width; }))
 
 var color = d3.scale.category10();
-
-var line = d3.svg.line()
-    .x(function(d) { return d.x; })
-    .y(function(d) { return d.y; })
-    .interpolate("cardinal");
 
 function id (course){ return course.dept + course.num; }
 
@@ -124,7 +134,35 @@ d3.json("dummy_api_response.json", function(error, courses) {
         d.x++;
     }
     d3.select(this).attr("transform", "translate(" + x(d.x) + "," + d.y + ")")
+    redrawArrows();
   }
+
+var line = d3.svg.line()
+    .x(function(d) { return d[0]; })
+    .y(function(d) { return d[1]; })
+    .interpolate("cardinal");
+
+redrawArrows();
+function redrawArrows(){
+  svg.selectAll(".prereq_good").remove();
+  svg.selectAll(".prereq_bad").remove();
+  courses.forEach(function(higher){
+        higher.prereqs.forEach(function(lower_id){
+            var lower = nodes.get(lower_id)
+            console.log(higher, lower)
+            var dat = [[x(higher.x), higher.y + higher.h/2]
+                      ,[x(lower.x)+lower.w+10, lower.y + lower.h/2]]
+            var okay = higher.x > lower.x ? "good" : "bad";
+            svg.append("path")
+                .datum(dat)
+                .attr("d", line)
+                .attr("class", "prereq_"+okay)
+                .attr("marker-end", okay == "good" ? "url(#triangle)" : undefined)
+        })
+  })
+}
+
+
 });
 
 </script>
