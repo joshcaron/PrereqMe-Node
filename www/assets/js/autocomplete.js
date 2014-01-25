@@ -24,6 +24,7 @@ $(function() {
     "Scheme"
   ];
   $( "#dept" ).autocomplete({
-    source: availableTags
+    source: availableTags,
+    forceSelect: true
   });
-});
+}); 

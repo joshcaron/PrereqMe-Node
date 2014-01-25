@@ -1,3 +1,4 @@
+@charset "UTF-8";
 body, html {
   padding: 0;
   margin: 0; }
@@ -68,20 +69,29 @@ input.cnumber {
 
 .ui-menu-item {
   font-size: 1rem;
-  color: #474b75;
-  padding: 2px 10px;
-  width: 100%; }
+  color: #474b75; }
+
+.ui-corner-all {
+  width: 165px; }
 
 .ui-state-focus, .ui-state-hover {
   background-color: #9ed5d0;
   width: 100%; }
+  .ui-state-focus li[data-selected=true], .ui-state-hover li[data-selected=true] {
+    background-color: #9ed5d0; }
 
 .ui-helper-hidden-accessible {
   display: none; }
 
 .ui-autocomplete {
   margin: 0;
-  padding: 0;
-  list-style-type: none;
-  background-color: white;
-  width: intrinsic; }
+  padding: 0 0 0 5px;
+  width: intrinsic;
+  max-height: 250px;
+    overflow-y: visible; }
+  .ui-autocomplete li {
+    list-style-type: none;
+    background-color: white; }
+  .ui-autocomplete a {
+    display: block;
+    padding: 2px 10px; }
