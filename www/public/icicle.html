@@ -33,7 +33,6 @@ var y = d3.scale.linear()
     .range([0, height]);
 
 var colors = [["#3182bd", "#6baed6", "#9ecae1", "#c6dbef"], ["#e6550d", "#fd8d3c", "#fdae6b", "#fdd0a2"], ["#31a354", "#74c476", "#a1d99b", "#c7e9c0"], ["#756bb1", "#9e9ac8", "#bcbddc", "#dadaeb"], ["#393b79", "#5254a3", "#6b6ecf", "#9c9ede"], ["#637939", "#8ca252", "#b5cf6b", "#cedb9c"], ["#8c6d31", "#bd9e39", "#e7ba52", "#e7cb94"], ["#843c39", "#ad494a", "#d6616b", "#e7969c"], ["#7b4173", "#a55194", "#ce6dbd", "#de9ed6"]]
-console.log(colors)
 var next_hue = 0;
 var root_color = "#624c22";
 var failsafe_color = "#bdbdbd";
@@ -47,7 +46,7 @@ var partition = d3.layout.partition()
             function(or_clause_ids){
                  return or_clause_ids.map(function(or_id){
                     if (!courses.get(or_id)){
-                        console.log(or_id);
+                        console.log("WARNING: Prereq "+or_id+" was listed but not provided!");
                     }
                     return courses.get(or_id);
                 });
@@ -61,7 +60,10 @@ var svg = d3.select("body").append("svg")
 
 var rects, labels1, labels2, labels_coreq, coreqs;
 
-d3.json("http://localhost:8888/api/courses/ECON/3560", function(error, json) {
+var root_dept = "ECON",
+    root_num = 3560+"";
+
+d3.json("http://localhost:8888/api/courses/"+root_dept+"/"+root_num, function(error, json) {
     //build the map
     json.root.color = [root_color];
     function intake(obj){
@@ -92,7 +94,10 @@ d3.json("http://localhost:8888/api/courses/ECON/3560", function(error, json) {
     });
 
     //remove missing prereqs
-    json.root.prereqs[3].splice(3,1);
+    if(root_dept == "ECON" && root_num == "3560"){
+        //dirty hack!
+        json.root.prereqs[3].splice(3,1);
+    }
     courses.forEach(function(k,v){
         v.prereqs.forEach(function(xs){
             xs.forEach(function(d, i){
@@ -128,14 +133,13 @@ d3.json("http://localhost:8888/api/courses/ECON/3560", function(error, json) {
         }
     }
     assign_color(json.root);
-    console.log(next_hue);
 
     rects = sel.append("rect")
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y); })
       .attr("width", function(d) { return x(d.dx); })
       .attr("height", function(d) { return y(d.dy); })
-      .attr("fill", function(d) { console.log(d.hue, d.depth); return d.color || colors[d.hue % colors.length][d.depth-1] || failsafe_color; })
+      .attr("fill", function(d) { return d.color || colors[d.hue % colors.length][d.depth-1] || failsafe_color; })
       .on("click", clicked);
 
     var coreq_sel = svg.selectAll("foo") //empty selector
