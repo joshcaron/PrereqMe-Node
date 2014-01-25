@@ -5,6 +5,7 @@ To get started
 
 Having MongoDB running
 Run 
+  python mongo_import_script.py
   node www/server.js
 
 Or, if you have nodemon installed
