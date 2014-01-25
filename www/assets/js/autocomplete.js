@@ -1,30 +1,7 @@
 $(function() {
-  var availableTags = [
-    "ActionScript",
-    "AppleScript",
-    "Asp",
-    "BASIC",
-    "C",
-    "C++",
-    "Clojure",
-    "COBOL",
-    "ColdFusion",
-    "Erlang",
-    "Fortran",
-    "Groovy",
-    "Haskell",
-    "Java",
-    "JavaScript",
-    "Lisp",
-    "Perl",
-    "PHP",
-    "Python",
-    "Ruby",
-    "Scala",
-    "Scheme"
-  ];
-  $( "#dept" ).autocomplete({
-    source: availableTags,
-    forceSelect: true
+  $.getJSON('ajax/department_list.json', function(data) {
+    $( "#dept" ).autocomplete({
+        source: data
+    });
   });
 }); 
