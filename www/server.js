@@ -1,3 +1,5 @@
+var engines = require('consolidate');
+
 // Setup the server
 var application_root = __dirname,
     express = require("express"),
@@ -5,6 +7,7 @@ var application_root = __dirname,
     
 // Configure the server
 var app = express();
+app.engine('html', engines.hogan);
 app.configure(function () {
   app.use(express.bodyParser());
   app.use(express.methodOverride());
