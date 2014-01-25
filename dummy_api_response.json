@@ -2,44 +2,87 @@
     {"dept": "CS",
       "num": "3000",
       "name": "Advanced CS course",
-      "prereqs": [["CS2510"], ["MATH2500"]]
+      "prereqs": [["CS2600"], ["MATH2500"]],
+      "coreq": "CS3001"
      }
-, "coreqs": []
 , "prereqs":
     [ {"dept": "CS",
-       "num": "2510",
+       "num": "3001",
+       "name": "Advanced CS course lab",
+       "prereqs": [],
+       "coreq": "CS3000"
+      }
+    , {"dept": "CS",
+       "num": "2600",
        "name": "Middle CS course",
-       "prereqs": [["CS2400", "CS2500"]]
+       "prereqs": [["CS2400", "CS2500"]],
+       "coreq": null
+      }
+    , {"dept": "CS",
+       "num": "2501",
+       "name": "Middle CS course lab",
+       "prereqs": [],
+       "coreq": "CS2500"
       }
     , {"dept": "CS",
        "num": "2500",
        "name": "Entry CS course 2",
-       "prereqs": []
+       "prereqs": [],
+       "coreq": "CS2501"
       }
     , {"dept": "CS",
        "num": "2400",
        "name": "Entry CS course 1",
-       "prereqs": []
+       "prereqs": [],
+       "coreq": null
       }
     , {"dept": "MATH",
        "num": "2500",
        "name": "Middle Math course",
-       "prereqs": [["MATH1000", "MATH1100"], ["MATH1500"]]
+       "prereqs": [["MATH1100", "MATH1200"], ["MATH1500"]],
+       "coreq": "MATH2501"
        }
     , {"dept": "MATH",
-       "num": "1000",
-       "name": "Entry Math course 1",
-       "prereqs": []
-      }
+       "num": "2501",
+       "name": "Middle Math recitation",
+       "prereqs": [],
+       "coreq": "MATH2500"
+       }
     , {"dept": "MATH",
        "num": "1100",
+       "name": "Entry Math course 1",
+       "prereqs": [["MATH1001"]],
+       "coreq": null
+      }
+    , {"dept": "MATH",
+       "num": "1200",
        "name": "Entry Math course 2",
-       "prereqs": []
+       "prereqs": [["MATH1002"]],
+       "coreq": null
+      }
+    , {"dept": "MATH",
+       "num": "1001",
+       "name": "Review math course",
+       "prereqs": [],
+       "coreq": null
+      }
+    , {"dept": "MATH",
+       "num": "1002",
+       "name": "Review math course",
+       "prereqs": [],
+       "coreq": null
       }
     , {"dept": "MATH",
        "num": "1500",
        "name": "Other entry Math course",
-       "prereqs": []
+       "prereqs": [["MATH1400"]],
+       "coreq": null
+      }
+    , {"dept": "MATH",
+       "num": "1400",
+       "name": "Rudimentary Math course",
+       "prereqs": [],
+       "coreq": null
       }
     ]
 }

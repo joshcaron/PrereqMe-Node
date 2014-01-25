@@ -6,11 +6,16 @@ rect {
   stroke: #fff;
 }
 
-.label1, .label2{
+.label1, .label2, .label_top, .label_coreq{
     font-family: sans-serif;
+    pointer-events: none;
 }
 .label1{
     font-size: 18px;
+}
+
+.label_coreq{
+    font-style: italic;
 }
 
 </style>
@@ -32,8 +37,6 @@ var next_hue = 0;
 var root_color = "#624c22";
 var failsafe_color = "#bdbdbd";
 
-d3.scale.category20c().range();
-
 function id (course){ return course.dept + course.num; }
 var courses = d3.map();
 
@@ -53,13 +56,28 @@ var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-var rects, labels;
+var rects, labels1, labels2, labels_coreq, coreqs;
 
 d3.json("dummy_api_response.json", function(error, json) {
     json.root.color = [root_color];
     courses.set(id(json.root), json.root);
-    json.coreqs .forEach(function(d){ courses.set(id(d), d); });
-    json.prereqs.forEach(function(d){ courses.set(id(d), d); });
+    json.prereqs.forEach(function(d){
+        courses.set(id(d), d);
+    });
+    courses.forEach(function(k,v){
+        if (v.coreq){
+            if (v.prereqs.length){
+                v.coreq = null;
+                return;
+            }
+            var c = courses.get(v.coreq)
+            if (c.prereqs.length || +v.num > c.num){
+                c.coreq = null;
+            }else{
+                v.coreq = null;
+            }
+        }
+    })
 
     var sel = svg.selectAll("rect")
         .data(partition(json.root))
@@ -95,6 +113,34 @@ d3.json("dummy_api_response.json", function(error, json) {
       .attr("fill", function(d) { return d.color || colors[d.hue][d.depth-1] || failsafe_color; })
       .on("click", clicked);
 
+    var coreq_sel = svg.selectAll("foo") //empty selector
+        .data(json.prereqs.concat(json.root).filter(function(d){return d.coreq != null}))
+        .enter()
+
+    coreqs = coreq_sel.append("rect")
+        .each(function(d) {
+            var c = courses.get(d.coreq);
+                d.x = c.x + 0.1*c.dx;
+                d.y = c.y + 0.7*c.dy;;
+                d.dx = 0.8*c.dx;
+                d.dy = 0.2*c.dy;
+                d.color = d3.rgb(c.color || colors[c.hue][c.depth-1] || failsafe_color).brighter(0.3);
+        })
+        .attr("x", function(d) { return x(d.x); })
+        .attr("y", function(d) { return y(d.y); })
+        .attr("width", function(d) { return x(d.dx); })
+        .attr("height", function(d) { return y(d.dy); })
+        .attr("fill", function(d) { return d.color; })
+        .style("stroke", "none")
+
+    label_coreq = coreq_sel.append("text")
+        .attr("transform", function(d){
+            var c = courses.get(d.coreq);
+            return "translate("+x(c.x+c.dx/2)+","+(y(c.y+c.dy*0.84))+")"})
+        .attr("class", "label_coreq")
+        .attr("text-anchor", "middle")
+        .text(function(d){return d.dept +" "+ d.num});
+
     labels1 = sel.append("text")
       .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)-10)+")"})
       .attr("class", "label1")
@@ -109,7 +155,11 @@ d3.json("dummy_api_response.json", function(error, json) {
 
 });
 
+var last_clicked = null;
 function clicked(d) {
+  if (d == last_clicked) {return;}
+  last_clicked = d;
+
   x.domain([d.x, d.x + d.dx]);
   y.domain([d.y, 1]).range([d.y ? 20 : 0, height]);
 
@@ -127,6 +177,35 @@ function clicked(d) {
   labels2.transition()
       .duration(750)
       .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)+10)+")"})
+
+  coreqs.transition()
+      .duration(750)
+      .attr("x", function(d) { return x(d.x); })
+      .attr("y", function(d) { return y(d.y); })
+      .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
+      .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); });
+
+  label_coreq.transition()
+      .duration(750)
+      .attr("transform", function(d){
+        var c = courses.get(d.coreq);
+        return "translate("+x(c.x+c.dx/2)+","+(y(c.y+c.dy*0.84))+")"
+    })
+
+  svg.selectAll(".label_top")
+    .remove();
+
+  var p = d.parent;
+  if (p){
+      svg.append("text")
+          .transition()
+          .delay(700)
+          .duration(50)
+          .attr("transform", "translate("+x(d.x+d.dx/2)+","+(y(p.y+p.dy)-4)+")")
+          .attr("class", "label_top")
+          .attr("text-anchor", "middle")
+          .text(p.dept+" "+p.num+": "+p.name);
+    }
 
 }
 
