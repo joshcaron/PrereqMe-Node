@@ -1,0 +1,18 @@
+[
+{"dept": "CS",
+  "num": "3000",
+  "name": "Advanced CS course",
+  "prereqs": ["CS2510"]
+ },
+{"dept": "CS",
+  "num": "2510",
+  "name": "Middle CS course",
+  "prereqs": ["CS2500"]
+ },
+{"dept": "CS",
+  "num": "2500",
+  "name": "Entry CS course",
+  "prereqs": []
+ }
+]
+
