@@ -24,7 +24,7 @@
     , {"dept": "MATH",
        "num": "2500",
        "name": "Middle Math course",
-       "prereqs": [["MATH1000", "MATH1100"]]
+       "prereqs": [["MATH1000", "MATH1100"], ["MATH1500"]]
        }
     , {"dept": "MATH",
        "num": "1000",
@@ -34,6 +34,11 @@
     , {"dept": "MATH",
        "num": "1100",
        "name": "Entry Math course 2",
+       "prereqs": []
+      }
+    , {"dept": "MATH",
+       "num": "1500",
+       "name": "Other entry Math course",
        "prereqs": []
       }
     ]
