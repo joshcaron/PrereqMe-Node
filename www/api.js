@@ -1,3 +1,27 @@
+var Class = function(data) {
+	var self = {};
+	self.dept = data.departmentId;
+	self.num = data.courseId;
+	self.name = data.courseData.title;
+	self.prereqs = data.courseData.prereqstr;
+	return self;
+}
+
+var courseToClass = function(course) {
+	return new Class(course);
+}
+
+
+var convertCourseList = function(courseList) {
+	var classList = [];
+	courseList.forEach(function(course) {
+		var c = courseToClass(course);
+		classList.push(c);
+	});
+
+	return classList;
+}
+
 exports.setup = function(app) {
 	// The API root
 	app.get('/api', function (req, res) {
@@ -15,7 +39,7 @@ exports.setup = function(app) {
 				console.log(err);
 				res.send("An error occured and has been logged.");
 			}
-			res.send(courses);
+			res.send(convertCourseList(courses));
 		});
 	});
 
@@ -26,7 +50,7 @@ exports.setup = function(app) {
 				console.log(err);
 				res.send("An error occured and has been logged.");
 			}
-			res.send(courses);
+			res.send(convertCourseList(courses));
 		});
 	});
 
@@ -44,11 +68,10 @@ exports.setup = function(app) {
 			var foundCourse = null;
 			courses.forEach(function(course) {
 				if (course.courseId == req.params.courseId) {
-					foundCourse = course;
+					foundCourse = new Class(course);
 				}
 			});
 			res.send(foundCourse);
 		});
 	});
-
 }
