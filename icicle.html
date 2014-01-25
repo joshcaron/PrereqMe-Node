@@ -6,8 +6,9 @@ rect {
   stroke: #fff;
 }
 
-.label1, .label2{
+.label1, .label2, .label_top{
     font-family: sans-serif;
+    pointer-events: none;
 }
 .label1{
     font-size: 18px;
@@ -127,6 +128,23 @@ function clicked(d) {
   labels2.transition()
       .duration(750)
       .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)+10)+")"})
+
+  svg.select(".label_top")
+    .transition()
+    .duration(150)
+    .remove();
+
+  var p = d.parent;
+  if (p){
+      svg.append("text")
+          .transition()
+          .delay(700)
+          .duration(50)
+          .attr("transform", "translate("+x(d.x+d.dx/2)+","+(y(p.y+p.dy)-4)+")")
+          .attr("class", "label_top")
+          .attr("text-anchor", "middle")
+          .text(p.dept+" "+p.num+": "+p.name);
+    }
 
 }
 
