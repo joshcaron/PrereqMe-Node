@@ -6,13 +6,20 @@ rect {
   stroke: #fff;
 }
 
+.label1, .label2{
+    font-family: sans-serif;
+}
+.label1{
+    font-size: 18px;
+}
+
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.js"></script>
 <script>
 
-var width = 960,
-    height = 500;
+var width = 1300,
+    height = 650;
 
 var x = d3.scale.linear()
     .range([0, width]);
@@ -20,14 +27,25 @@ var x = d3.scale.linear()
 var y = d3.scale.linear()
     .range([0, height]);
 
-var color = d3.scale.category20c();
+var colors = [["#3182bd", "#6baed6", "#9ecae1", "#c6dbef"], ["#e6550d", "#fd8d3c", "#fdae6b", "#fdd0a2"], ["#31a354", "#74c476", "#a1d99b", "#c7e9c0"], ["#756bb1", "#9e9ac8", "#bcbddc", "#dadaeb"], ["#636363", "#969696", "#bdbdbd", "#d9d9d9"]]
+var next_hue = 0;
+var root_color = "#624c22";
+var failsafe_color = "#bdbdbd";
+
+d3.scale.category20c().range();
 
 function id (course){ return course.dept + course.num; }
-courses = d3.map();
+var courses = d3.map();
 
 var partition = d3.layout.partition()
-    .children(function(d) { return d.prereqs.length == 0 ? null : d.prereqs.map(
-        function(g){ return courses.get(g); })
+    .children(function(d) {
+        return d.prereqs.length == 0 ? null : [].concat.apply([], d.prereqs.map(
+            function(or_clause_ids){
+                var or_clause = or_clause_ids.map(function(or_id){
+                    return courses.get(or_id);
+                });
+                return or_clause;
+            }))
        })
     .value(function(d) { return 1 });
 
@@ -35,33 +53,81 @@ var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-var rect = svg.selectAll("rect");
+var rects, labels;
 
 d3.json("dummy_api_response.json", function(error, json) {
-  courses.set(id(json.root), json.root);
-  json.coreqs .forEach(function(d){ courses.set(id(d), d); });
-  json.prereqs.forEach(function(d){ courses.set(id(d), d); });
-  rect = rect
-      .data(partition(json.root))
-    .enter().append("rect")
+    json.root.color = [root_color];
+    courses.set(id(json.root), json.root);
+    json.coreqs .forEach(function(d){ courses.set(id(d), d); });
+    json.prereqs.forEach(function(d){ courses.set(id(d), d); });
+
+    var sel = svg.selectAll("rect")
+        .data(partition(json.root))
+        .enter();
+
+    function assign_color(d){
+        if (d.prereqs.length){
+            d.prereqs = d.prereqs.sort(function(a,b){return a.length > b.length ? -1 : 1})
+            d.prereqs.map(function(or_clause,i){
+                if (i==0 && d != json.root){ //reuse parent hue for first, largest OR-clause
+                    or_clause.map(function(c_id){
+                        var c = courses.get(c_id)
+                        c.hue = d.hue;
+                        assign_color(c);
+                    })
+                }else{ //pick new hues for separate AND requirements
+                    or_clause.map(function(c_id){
+                        var c = courses.get(c_id)
+                        c.hue = next_hue; next_hue++;
+                        assign_color(c);
+                    })
+                }
+            })
+        }
+    }
+    assign_color(json.root);
+
+    rects = sel.append("rect")
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y); })
       .attr("width", function(d) { return x(d.dx); })
       .attr("height", function(d) { return y(d.dy); })
-      .attr("fill", function(d) { return color((d.children ? d : d.parent).key); })
+      .attr("fill", function(d) { return d.color || colors[d.hue][d.depth-1] || failsafe_color; })
       .on("click", clicked);
+
+    labels1 = sel.append("text")
+      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)-10)+")"})
+      .attr("class", "label1")
+      .attr("text-anchor", "middle")
+      .text(function(d){return d.dept +" "+ d.num});
+
+    labels2 = sel.append("text")
+      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)+10)+")"})
+      .attr("class", "label2")
+      .attr("text-anchor", "middle")
+      .text(function(d){return d.name});
+
 });
 
 function clicked(d) {
   x.domain([d.x, d.x + d.dx]);
   y.domain([d.y, 1]).range([d.y ? 20 : 0, height]);
 
-  rect.transition()
+  rects.transition()
       .duration(750)
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y); })
       .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
       .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); });
+
+  labels1.transition()
+      .duration(750)
+      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)-10)+")"})
+
+  labels2.transition()
+      .duration(750)
+      .attr("transform", function(d){return "translate("+x(d.x+d.dx/2)+","+(y(d.y+d.dy/2)+10)+")"})
+
 }
 
 </script>
