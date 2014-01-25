@@ -67,7 +67,14 @@ input.cnumber {
   width: 210px; }
 
 .ui-menu-item {
-  color: blue; }
+  font-size: 1rem;
+  color: #474b75;
+  padding: 2px 10px;
+  width: 100%; }
+
+.ui-state-focus, .ui-state-hover {
+  background-color: #9ed5d0;
+  width: 100%; }
 
 .ui-helper-hidden-accessible {
   display: none; }
