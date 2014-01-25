@@ -2,7 +2,7 @@
 // Get the DB connection
 var db = require("./db.js");
 var Course = db.Course;
-var courseLookup = require('./courseLookup.js');
+// var courseLookup = require('./courseLookup.js');
 
 // async
 var async = require('async');
