@@ -92,10 +92,47 @@ input:not([type=submit]):not([type=file]) {
 //::-moz-placeholder,
 //:-ms-input-placeholder 
 
-input.dept {
+input#dept {
   width: 165px;
 }
 
 input.cnumber {
   width: 210px;
+
+}
+
+.ui-menu-item {
+  font-size: 1rem;
+  color: $bgpurp;
+}
+
+.ui-corner-all {
+    width: 165px;
+}
+
+.ui-state-focus, .ui-state-hover {
+  background-color: $Blue;
+  width: 100%;
+  & li[data-selected=true] {
+      background-color: $Blue;
+  }
+}
+
+.ui-helper-hidden-accessible { display:none; }
+
+.ui-autocomplete {
+  margin: 0;
+  padding: 0 0 0 5px;
+  width: intrinsic;
+  max-height: 250px;
+  overflow-y: visible;
+
+  li {
+    list-style-type: none;
+    background-color: white;
+  }
+  a {
+    display: block;
+    padding: 2px 10px;
+  }
 }
