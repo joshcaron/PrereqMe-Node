@@ -1,5 +1,4 @@
-var root_dept = "ECON",
-    root_num = 3560+"";
+$(document).ready(function() {
 
 var width = 1300,
     height = 650;
@@ -32,7 +31,7 @@ var partition = d3.layout.partition()
        })
     .value(function(d) { return 1 });
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#svg").append("svg")
     .attr("width", width)
     .attr("height", height);
 
@@ -236,3 +235,4 @@ function clicked(d) {
     }
 
 }
+});

@@ -7,7 +7,9 @@ var application_root = __dirname,
     
 // Configure the server
 var app = express();
+var jade = require('jade')
 app.engine('html', engines.hogan);
+// app.engine('.html', jade);
 app.configure(function () {
   app.use(express.bodyParser());
   app.use(express.methodOverride());
