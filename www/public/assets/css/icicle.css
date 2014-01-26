@@ -1,15 +1,22 @@
-rect {
+svg rect {
   stroke: #fff;
 }
 
-.label1, .label2, .label_top, .label_coreq{
+svg .label1, .label2, .label_top, .label_coreq{
     font-family: sans-serif;
     pointer-events: none;
 }
-.label1{
+
+svg .label1{
     font-size: 18px;
 }
+svg .label2{
+    font-size: 14px;
+}
+svg .label_top{
+    font-size: 14px;
+}
 
-.label_coreq{
+svg .label_coreq{
     font-style: italic;
 }

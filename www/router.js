@@ -20,6 +20,7 @@ exports.setup = function(app) {
 							"<title>Project Volans: Results</title>\n" +
 							"<meta charset='UTF-8' />\n" +
 							"<link rel='stylesheet' href='/assets/css/style.css' />\n" +
+                            "<link rel='stylesheet' href='/assets/css/icicle.css' />\n" +
 							"<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>\n" +
 							 variableScript + 
 							 icicleScript + 
