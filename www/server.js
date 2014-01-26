@@ -22,4 +22,4 @@ var router = require("./router.js");
 router.setup(app);
 
 // Launch server
-app.listen(8888);
+app.listen(2369);
