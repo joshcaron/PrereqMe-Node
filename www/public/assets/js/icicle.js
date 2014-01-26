@@ -152,7 +152,6 @@ d3.json("http://localhost:8888/api/courses/"+root_dept+"/"+root_num, function(er
       .style("opacity", function(d){
           var text_w = this.getBBox().width;
           var box_w = x(d.x + d.dx) - x(d.x);
-          console.log(text_w, box_w);
           return text_w > box_w ? "0" : "1";
       })
 
@@ -164,7 +163,6 @@ d3.json("http://localhost:8888/api/courses/"+root_dept+"/"+root_num, function(er
       .style("opacity", function(d){
           var text_w = this.getBBox().width;
           var box_w = x(d.x + d.dx) - x(d.x);
-          console.log(text_w, box_w);
           return text_w > box_w ? "0" : "1";
       })
 
@@ -191,7 +189,6 @@ function clicked(d) {
       .style("opacity", function(d){
           var text_w = this.getBBox().width;
           var box_w = x(d.x + d.dx) - x(d.x);
-          console.log(text_w, box_w);
           return text_w > box_w ? "0" : "1";
       })
 
@@ -201,7 +198,6 @@ function clicked(d) {
       .style("opacity", function(d){
           var text_w = this.getBBox().width;
           var box_w = x(d.x + d.dx) - x(d.x);
-          console.log(text_w, box_w);
           return text_w > box_w ? "0" : "1";
       })
 
