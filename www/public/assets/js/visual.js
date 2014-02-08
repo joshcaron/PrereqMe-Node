@@ -11,6 +11,7 @@ var Volans = {
 		if (courseId) {
 			url += "/" + courseId;
 		}
+		console.debug("Fetching from: " + url);
 		var jqxhr = $.getJSON(url);
 		// Successfully got data, so set it
 		jqxhr.done(this.setData);
@@ -32,12 +33,25 @@ var Volans = {
 		Volans.data = data;
 		console.log("Successfully set data from " + this.url);
 		console.dir(data);
+	},
+
+	fetchAllPrereqs: function(course) {
+		var prereqs = [];
+		if (course.prereqs.length > 0) {
+			root.prereqs.map(function(prereqGroup) {
+				prereqGroup.map(function(prereq) {
+					prereqs.push(prereq);
+				});
+			});
+		}
+
+		return prereqs;
 	}
 }
 
 var Icicle = {
 
-	width: 1300,
+	width: 1400,
 	height: 650,
 
 	map: null,
@@ -66,30 +80,62 @@ var Icicle = {
 
 		var coursesFetched = function(data) {
 			var map = d3.map();
-			Icicle.map = Icicle.setupMap(map, data);
+			Icicle.map = Icicle.setupMapData(map, data, 0);
+			// Icicle.draw();
 		}
 
+		// Asynchronously fetch the course data
 		var courses = Volans.fetch(deptId, courseId, coursesFetched);
-
 	},
 
-	setupMap: function(map, courses) {
+	setupMapData: function(map, courses, colorIndex) {
 		var root = courses.root;
+		if (!root) {
+			console.error("Error fetching root.");
+			return;
+		}
+
+		var colorGroup = Icicle.colors[colorIndex];
+		var colorNum = parseInt(Math.random() * colorGroup.length) + 1;
+		var color = colorGroup[colorNum];
+		root.color = color;
+
 		var title = Volans.getCourseTitle(root);
 		map.set(title, root);
 
 		var prereqs = courses.prereqs;
 		prereqs.forEach(function(prereqGroup) {
+			colorIndex++;
 			prereqGroup.forEach(function(prereq) {
-				map = Icicle.setupMap(map, prereq);
+				map = Icicle.setupMapData(map, prereq, colorIndex);
 			});
 		});
 
 		return map;
-
 	},
 
-	setColor: function(course) {
+	partition: function() {
+		var childrenFunc = function(course) {
+			if (!course || !course.prereqs || course.prereqs.length === 0) {
+				return null;
+			}
+			return Volans.fetchAllPrereqs(course);
+		}
 
+		return d3.layout.partition().children(childrenFunc).value(function(d) { return 1});
+	},
+
+	draw: function() {
+		var sel = this.svg.selectAll("rect").data(Icicle.partition(Volans.data)).enter();
+		sel.append("rect")
+			.attr("x", function(d) { return x(d.x); })
+			.attr("y", function(d) { return y(d.y); })
+			.attr("width", function(d) { return x(d.dx); })
+			.attr("height", function(d) { return y(d.dy); })
+			.attr("fill", function(d) { return d.color; });
 	}
 }
+
+$(document).ready(function() {
+	Icicle.setup("CS", "3500");
+});
