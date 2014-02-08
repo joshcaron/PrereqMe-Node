@@ -37,7 +37,7 @@ var svg = d3.select("#svg").append("svg")
 
 var rects, labels1, labels2, labels_coreq, coreqs;
 
-d3.json("http://localhost:8888/api/courses/"+root_dept+"/"+root_num, function(error, json) {
+d3.json("http://localhost:2369/api/courses/"+root_dept+"/"+root_num, function(error, json) {
     //build the map
     json.root.color = [root_color];
     function intake(obj){

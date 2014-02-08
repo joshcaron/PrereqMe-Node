@@ -13,7 +13,7 @@ exports.setup = function(app) {
 								"var root_dept = '" + deptId + "';\n" +
 								"var root_num = '" + courseId + "';\n" +
 							"</script>\n";
-		var icicleScript = "<script src='/assets/js/d3.v3.js'></script>\n<script src='/assets/js/jquery.min.js'></script><script src='/assets/js/icicle.js'></script>\n";
+		var icicleScript = "<script src='/assets/js/d3.v3.js'></script>\n<script src='/assets/js/jquery.min.js'></script>\n<script src='/assets/js/icicle.js'></script>\n<script src='/assets/js/visual.js'></script>";
 		var html = "<!DOCTYPE html>\n" +
 						"<html lang='en'>\n" +
 						"<head>\n" + 
