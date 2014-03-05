@@ -10,7 +10,7 @@ exports.setup = function(app) {
 		var deptId = req.params.deptId;
 		var courseId = req.params.courseId;
 		var variableScript = "<script type='text/javascript'>\n" +
-								"var root_dept = '" + deptId + "';\n" +
+								"var root_dept = '" + deptId + "'.toUpperCase();\n" +
 								"var root_num = '" + courseId + "';\n" +
 							"</script>\n";
 		var icicleScript = "<script src='/assets/js/d3.v3.js'></script>\n<script src='/assets/js/jquery.min.js'></script>\n<script src='/assets/js/icicle.js'></script>\n<script src='/assets/js/visual.js'></script>";
