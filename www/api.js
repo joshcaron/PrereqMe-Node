@@ -32,7 +32,8 @@ var Class = function(data) {
  * Convert a Course to a Class
  */
 function courseToClass(course) {
-	return new Class(course);
+	// return new Class(course);
+	return course;
 }
 
 /**
