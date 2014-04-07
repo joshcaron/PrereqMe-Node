@@ -25,7 +25,7 @@ var partition = d3.layout.partition()
                     if (!courses.get(or_id)){
                         console.log("WARNING: Prereq "+or_id+" was listed but not provided!");
                     }
-                    return courses.get(or_id);
+                    return courses.get(or_id) || null;
                 });
             }))
        })
@@ -37,7 +37,7 @@ var svg = d3.select("#svg").append("svg")
 
 var rects, labels1, labels2, labels_coreq, coreqs;
 
-d3.json("http://localhost:8888/api/courses/"+root_dept+"/"+root_num, function(error, json) {
+d3.json("http://localhost:2369/api/courses/"+root_dept+"/"+root_num, function(error, json) {
     //build the map
     json.root.color = [root_color];
     function intake(obj){
@@ -152,7 +152,6 @@ d3.json("http://localhost:8888/api/courses/"+root_dept+"/"+root_num, function(er
       .style("opacity", function(d){
           var text_w = this.getBBox().width;
           var box_w = x(d.x + d.dx) - x(d.x);
-          console.log(text_w, box_w);
           return text_w > box_w ? "0" : "1";
       })
 
@@ -164,7 +163,6 @@ d3.json("http://localhost:8888/api/courses/"+root_dept+"/"+root_num, function(er
       .style("opacity", function(d){
           var text_w = this.getBBox().width;
           var box_w = x(d.x + d.dx) - x(d.x);
-          console.log(text_w, box_w);
           return text_w > box_w ? "0" : "1";
       })
 
@@ -191,7 +189,6 @@ function clicked(d) {
       .style("opacity", function(d){
           var text_w = this.getBBox().width;
           var box_w = x(d.x + d.dx) - x(d.x);
-          console.log(text_w, box_w);
           return text_w > box_w ? "0" : "1";
       })
 
@@ -201,7 +198,6 @@ function clicked(d) {
       .style("opacity", function(d){
           var text_w = this.getBBox().width;
           var box_w = x(d.x + d.dx) - x(d.x);
-          console.log(text_w, box_w);
           return text_w > box_w ? "0" : "1";
       })
 

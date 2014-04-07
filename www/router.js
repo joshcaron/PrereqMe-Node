@@ -10,16 +10,17 @@ exports.setup = function(app) {
 		var deptId = req.params.deptId;
 		var courseId = req.params.courseId;
 		var variableScript = "<script type='text/javascript'>\n" +
-								"var root_dept = '" + deptId + "';\n" +
+								"var root_dept = '" + deptId + "'.toUpperCase();\n" +
 								"var root_num = '" + courseId + "';\n" +
 							"</script>\n";
-		var icicleScript = "<script src='/assets/js/d3.v3.js'></script>\n<script src='/assets/js/jquery.min.js'></script><script src='/assets/js/icicle.js'></script>\n";
+		var icicleScript = "<script src='/assets/js/d3.v3.js'></script>\n<script src='/assets/js/jquery.min.js'></script>\n<script src='/assets/js/icicle.js'></script>\n<script src='/assets/js/visual.js'></script>";
 		var html = "<!DOCTYPE html>\n" +
 						"<html lang='en'>\n" +
 						"<head>\n" + 
 							"<title>Project Volans: Results</title>\n" +
 							"<meta charset='UTF-8' />\n" +
 							"<link rel='stylesheet' href='/assets/css/style.css' />\n" +
+                            "<link rel='stylesheet' href='/assets/css/icicle.css' />\n" +
 							"<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>\n" +
 							 variableScript + 
 							 icicleScript + 

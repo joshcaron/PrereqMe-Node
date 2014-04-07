@@ -48,7 +48,7 @@ var partition = d3.layout.partition()
                     if (!courses.get(or_id)){
                         console.log("WARNING: Prereq "+or_id+" was listed but not provided!");
                     }
-                    return courses.get(or_id);
+                    return courses.get(or_id) || null;
                 });
             }))
        })
